@@ -109,17 +109,17 @@ st.markdown(
 
 rabbit_images = [
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame1.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%201.png?raw=true",
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame2.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%202.png?raw=true",
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame3.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%203.png?raw=true",
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame4.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%204.png?raw=true",
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame5.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%205.png?raw=true",
 
-    "https://raw.githubusercontent.com/hyewonlee020730/chatbot-class-26.05.11/main/Assets/Frame6.png",
+    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%206.png?raw=true"
 
 ]
 # ---------------------------------------------------
