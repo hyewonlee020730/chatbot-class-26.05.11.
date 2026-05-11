@@ -102,29 +102,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ---------------------------------------------------
-# 깃허브 이미지 주소
-# ---------------------------------------------------
-# ⚠️ 꼭 본인 깃허브 주소로 변경하기
-
-rabbit_images = [
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%201.png?raw=true",
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%202.png?raw=true",
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%203.png?raw=true",
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%204.png?raw=true",
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%205.png?raw=true",
-
-    "https://github.com/hyewonlee020730/chatbot-class-26.05.11/blob/main/Assets/Frame%206.png?raw=true"
-
-]
-# ---------------------------------------------------
-# API KEY
-# ---------------------------------------------------
 
 openai_api_key = st.text_input(
     "OpenAI API Key",
@@ -159,6 +136,7 @@ else:
 - 감성적
 - 실제 토끼처럼
 - 긴 설명 절대 금지
+- 마지막에 ~토 가끔 붙이기
 
 예시:
 "왜 이제 왔어?"
@@ -166,10 +144,6 @@ else:
 "오늘도 고생했네."
 "안아줘."
 """
-
-    # ---------------------------------------------------
-    # 세션 상태
-    # ---------------------------------------------------
 
     if "messages" not in st.session_state:
 
@@ -180,9 +154,7 @@ else:
             }
         ]
 
-    # ---------------------------------------------------
-    # 채팅 출력
-    # ---------------------------------------------------
+ 
 
     for message in st.session_state.messages:
 
