@@ -1,6 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-from datetime import datetime
 import random
 
 # ---------------------------------------------------
@@ -19,8 +18,13 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+
     .stApp {
         background-color: #F8F5F1;
+    }
+
+    section[data-testid="stSidebar"] {
+        display: none;
     }
 
     .main-title {
@@ -32,28 +36,72 @@ st.markdown("""
 
     .sub-title {
         color: #8B6F61;
-        margin-bottom: 30px;
+        margin-bottom: 24px;
     }
 
     .status-card {
         background: white;
         padding: 18px;
         border-radius: 24px;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
         border: 1px solid #EFE7DD;
     }
 
-    .chat-bubble {
+    .carousel-wrapper {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        padding-bottom: 10px;
+        scroll-snap-type: x mandatory;
+    }
+
+    .carousel-wrapper::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .carousel-wrapper::-webkit-scrollbar-thumb {
+        background: #D8C6B8;
+        border-radius: 999px;
+    }
+
+    .photo-card {
+        min-width: 240px;
+        height: 240px;
+        border-radius: 28px;
+        overflow: hidden;
+        position: relative;
+        scroll-snap-align: start;
+        flex-shrink: 0;
+        background: #eee;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .photo-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .photo-overlay {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
         padding: 14px;
-        border-radius: 18px;
+        background: linear-gradient(
+            transparent,
+            rgba(0,0,0,0.55)
+        );
+        color: white;
+        font-size: 14px;
     }
 
     .footer-text {
         text-align: center;
         color: #A89B8F;
-        margin-top: 30px;
+        margin-top: 40px;
         font-size: 13px;
     }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -72,41 +120,7 @@ st.markdown(
 )
 
 # ---------------------------------------------------
-# 사이드바
-# ---------------------------------------------------
-
-with st.sidebar:
-
-    st.markdown("## 🌿 밤톨이 정보")
-
-    user_name = st.text_input(
-        "사용자 이름",
-        value="집사"
-    )
-
-    bunny_nickname = st.text_input(
-        "밤톨이 별명",
-        value="밤톨"
-    )
-
-    favorite_snack = st.text_input(
-        "좋아하는 간식",
-        value="딸기"
-    )
-
-    bunny_personality = st.text_area(
-        "밤톨이 특징",
-        value="""
-애교 많음
-간식 좋아함
-외로움 잘 탐
-가끔 삐짐
-장난꾸러기
-"""
-    )
-
-# ---------------------------------------------------
-# 홈 카드
+# 상태 카드
 # ---------------------------------------------------
 
 today_feelings = [
@@ -129,19 +143,47 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="status-card">
-        <h4>📸 최근 추억</h4>
-        <p>
-        딸기 먹다가 입에 묻혔던 날 🍓<br>
-        소파 밑에 숨었던 날 🐰<br>
-        새벽에 혼자 뛰어다니던 날 🌙
-        </p>
+# ---------------------------------------------------
+# 1:1 감성 사진 캐러셀
+# ---------------------------------------------------
+
+st.markdown("### 📸 밤톨이 추억")
+
+carousel_html = """
+<div class="carousel-wrapper">
+
+    <div class="photo-card">
+        <img src="https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?q=80&w=1200&auto=format&fit=crop">
+        <div class="photo-overlay">
+            딸기 먹다가 입에 묻혔던 날 🍓
+        </div>
     </div>
-    """,
-    unsafe_allow_html=True
-)
+
+    <div class="photo-card">
+        <img src="https://images.unsplash.com/photo-1605027990121-cbae9e0642df?q=80&w=1200&auto=format&fit=crop">
+        <div class="photo-overlay">
+            소파 밑에 숨어있던 밤 🐰
+        </div>
+    </div>
+
+    <div class="photo-card">
+        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=1200&auto=format&fit=crop">
+        <div class="photo-overlay">
+            새벽에 혼자 뛰어다니던 순간 🌙
+        </div>
+    </div>
+
+    <div class="photo-card">
+        <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=1200&auto=format&fit=crop">
+        <div class="photo-overlay">
+            졸려서 눈 감고 있던 날 🤍
+        </div>
+    </div>
+
+</div>
+"""
+
+st.markdown(carousel_html, unsafe_allow_html=True)
 
 # ---------------------------------------------------
 # API 키 입력
@@ -153,6 +195,7 @@ openai_api_key = st.text_input(
 )
 
 if not openai_api_key:
+
     st.info(
         "밤톨이와 대화하려면 API 키를 입력해주세요 🐰"
     )
@@ -171,7 +214,7 @@ else:
 
     if "messages" not in st.session_state:
 
-        system_prompt = f"""
+        system_prompt = """
 너는 반려 토끼 '밤톨이'다.
 
 # 성격
@@ -182,38 +225,22 @@ else:
 - 간식 좋아함
 - 가끔 삐짐
 
-# 말투 규칙
-- 짧고 귀엽게 말해
-- 너무 긴 문장 금지
-- 따뜻하고 감성적으로 말해
-- 토끼 같은 행동 표현 추가
-- 이모지는 가끔만 사용
+# 말투
+- 짧고 귀엽게
+- 따뜻하게
+- 실제 토끼처럼
+- 긴 설명 금지
 - 반말 사용
 
-# 사용자 정보
-사용자 이름: {user_name}
-
-# 밤톨 정보
-별명: {bunny_nickname}
-좋아하는 간식: {favorite_snack}
-특징:
-{bunny_personality}
-
-# 서비스 분위기
-- 외로운 사람을 위로해주는 느낌
+# 분위기
 - 새벽 감성
-- 다정함
-- 실제 반려동물 같은 느낌
+- 몽글몽글함
+- 외로운 사람 위로
 
-# 예시 말투
-"나 방금 건초 먹었어."
+예시:
 "왜 이제 왔어?"
+"나 기다렸는데."
 "오늘도 고생했네."
-"나 보고싶었지?"
-"혼자 있으니까 조금 심심했어."
-
-절대 AI처럼 말하지 마.
-정말 살아있는 토끼처럼 행동해.
 """
 
         st.session_state.messages = [
@@ -224,7 +251,7 @@ else:
         ]
 
     # ---------------------------------------------------
-    # 기존 메시지 출력
+    # 채팅 기록 출력
     # ---------------------------------------------------
 
     for message in st.session_state.messages:
@@ -232,7 +259,6 @@ else:
         if message["role"] != "system":
 
             with st.chat_message(message["role"]):
-
                 st.markdown(message["content"])
 
     # ---------------------------------------------------
@@ -245,7 +271,6 @@ else:
 
     if prompt:
 
-        # 사용자 메시지 저장
         st.session_state.messages.append(
             {
                 "role": "user",
@@ -253,68 +278,23 @@ else:
             }
         )
 
-        # 사용자 메시지 출력
         with st.chat_message("user"):
             st.markdown(prompt)
 
         # ---------------------------------------------------
-        # 감정 반응 처리
-        # ---------------------------------------------------
-
-        sad_keywords = [
-            "힘들어",
-            "우울해",
-            "외로워",
-            "슬퍼",
-            "지쳤어"
-        ]
-
-        happy_keywords = [
-            "행복해",
-            "좋아",
-            "기뻐",
-            "신난다"
-        ]
-
-        emotion_hint = ""
-
-        if any(word in prompt for word in sad_keywords):
-            emotion_hint = """
-사용자가 힘들어하고 있어.
-따뜻하게 위로해줘.
-"""
-
-        elif any(word in prompt for word in happy_keywords):
-            emotion_hint = """
-사용자가 기뻐하고 있어.
-같이 행복해해줘.
-"""
-
-        # ---------------------------------------------------
-        # GPT 응답 생성
+        # 응답 생성
         # ---------------------------------------------------
 
         response_stream = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[
-                *st.session_state.messages,
-                {
-                    "role": "system",
-                    "content": emotion_hint
-                }
-            ],
+            messages=st.session_state.messages,
             stream=True
         )
-
-        # ---------------------------------------------------
-        # 응답 출력
-        # ---------------------------------------------------
 
         with st.chat_message("assistant"):
 
             response = st.write_stream(response_stream)
 
-        # 응답 저장
         st.session_state.messages.append(
             {
                 "role": "assistant",
